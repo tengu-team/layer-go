@@ -1,7 +1,7 @@
 from charmhelpers.core import hookenv
 
 
-def environment():
+def go_environment():
     """returns a dict containing the following environment variables:
     GOROOT
     GOPATH

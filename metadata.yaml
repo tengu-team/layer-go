@@ -1,6 +1,6 @@
 name: go
 summary: layer go
-maintainer: Sander Borny <sander.borny@intec.ugent.be>
+maintainer: Sander Borny <sander.borny@ugent.be>
 description: |
   layer go
 tags:

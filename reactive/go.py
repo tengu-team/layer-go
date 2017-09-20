@@ -17,6 +17,9 @@ import os
 import shutil
 import tarfile
 import requests
+from pwd import getpwnam
+from grp import getgrnam
+from subprocess import call
 from jujubigdata import utils
 from charmhelpers.core import hookenv
 from charmhelpers.core.hookenv import status_set, log
@@ -44,9 +47,28 @@ def install_go():
     tar.close()
     shutil.move('/tmp/go', '/home/ubuntu')
     os.makedirs('/home/ubuntu/code/go')
+    chown_recursive('/home/ubuntu/go', 'ubuntu', 'ubuntu')
+    chown_recursive('/home/ubuntu/code', 'ubuntu', 'ubuntu')
     with utils.environment_edit_in_place('/etc/environment') as env:
         env['GOROOT'] = '/home/ubuntu/go'
         env['GOPATH'] = '/home/ubuntu/code/go'
         env['PATH'] = env['PATH'] + ':/home/ubuntu/go/bin:/home/ubuntu/code/go/bin'
+
+    # Install package manager
+    call(['wget', 'https://raw.githubusercontent.com/pote/gpm/v1.4.0/bin/gpm'])
+    call(['chmod', '+x', 'gpm'])
+    call(['mv', 'gpm', '/usr/local/bin'])
+
     status_set('active', 'go installed')
     set_state('go.installed')
+
+
+def chown_recursive(path, user, group):
+    user_id = getpwnam(user).pw_uid
+    group_id = getgrnam(group).gr_gid
+    for root, dirs, files in os.walk(path):
+        for momo in dirs:
+            os.chown(os.path.join(root, momo), user_id, group_id)
+        for momo in files:
+            os.chown(os.path.join(root, momo), user_id, group_id)
+    os.chown(path, user_id, group_id)
