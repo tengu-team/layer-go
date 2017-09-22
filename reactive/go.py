@@ -19,7 +19,6 @@ import tarfile
 import requests
 from pwd import getpwnam
 from grp import getgrnam
-from subprocess import call
 from jujubigdata import utils
 from charmhelpers.core import hookenv
 from charmhelpers.core.hookenv import status_set, log
@@ -55,9 +54,10 @@ def install_go():
         env['PATH'] = env['PATH'] + ':/home/ubuntu/go/bin:/home/ubuntu/code/go/bin'
 
     # Install package manager
-    call(['wget', 'https://raw.githubusercontent.com/pote/gpm/v1.4.0/bin/gpm'])
-    call(['chmod', '+x', 'gpm'])
-    call(['mv', 'gpm', '/usr/local/bin'])
+    r = requests.get('https://raw.githubusercontent.com/pote/gpm/v1.4.0/bin/gpm')
+    with open('/usr/local/bin/gpm', 'wb') as f:
+        f.write(r.content)
+    os.chmod("/usr/local/bin/gpm", 0o755)
 
     status_set('active', 'go installed')
     set_state('go.installed')
