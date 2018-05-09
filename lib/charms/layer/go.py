@@ -3,8 +3,7 @@ from charmhelpers.core import hookenv
 
 def go_environment():
     """returns a dict containing the following environment variables:
-    GOROOT
-    GOPATH
+    GOROOT, GOPATH
     """
     version = hookenv.config().get('version')
     if not version:
