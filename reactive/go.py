@@ -44,8 +44,9 @@ def install_go():
     tar = tarfile.open(file_path, 'r:gz')
     tar.extractall('/tmp')
     tar.close()
-    shutil.move('/tmp/go', '/home/ubuntu')
-    os.makedirs('/home/ubuntu/code/go')
+    if not os.path.exists('/home/ubuntu/go'):
+        shutil.move('/tmp/go', '/home/ubuntu')
+    os.makedirs('/home/ubuntu/code/go/bin')
     chown_recursive('/home/ubuntu/go', 'ubuntu', 'ubuntu')
     chown_recursive('/home/ubuntu/code', 'ubuntu', 'ubuntu')
     with utils.environment_edit_in_place('/etc/environment') as env:
